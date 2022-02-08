@@ -50,6 +50,10 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v2
 
+      - name: Get extra-material
+        run: |
+          curl https://raw.githubusercontent.com/philips-labs/slsa-provenance-action/main/test-data/materials-valid.json -o material.json
+          
       - name: Generate provenance
         uses: philips-labs/slsa-provenance-action@8f3f6a835ccfa2c0d5fb1d6dce15691a86575659
         with:
