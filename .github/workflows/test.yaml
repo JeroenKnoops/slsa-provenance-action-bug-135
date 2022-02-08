@@ -1,0 +1,61 @@
+name: Create a provenance from marketplace
+
+on:
+  workflow_dispatch:
+    inputs:
+      output:
+        default: provenance.json
+      artifact-path:
+        default: artifact/
+
+jobs:
+  build:
+    name: Build artifact
+    runs-on: ubuntu-latest
+    steps:
+      # traditionally you would build your code here and generate an artifact
+      - name: Create artifact
+        run:  echo "onion, tomato, jalapeno, cilantro, lime, salt" > salsa.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: salsa.txt
+
+  generate-example-provenance:
+    needs: build
+    name: Generate build provenance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+
+      - name: Generate provenance
+        uses: philips-labs/slsa-provenance-action@v0.6.0
+        with:
+          command: generate
+          subcommand: files
+          arguments: --artifact-path artifact/ --output-path provenance.json
+
+      - name: Upload provenance
+        uses: actions/upload-artifact@v2
+        with:
+          path: provenance.json
+
+  generate-provenance-bug-135:
+    needs: build
+    name: Generate build provenance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+
+      - name: Generate provenance
+        uses: philips-labs/slsa-provenance-action@8f3f6a835ccfa2c0d5fb1d6dce15691a86575659
+        with:
+          arguments: -d --artifact-path ${{ inputs.artifact-path }} --extra-materials material.json --output-path ${{ inputs.output }}
+
+      - name: Upload provenance
+        uses: actions/upload-artifact@v2
+        with:
+          path: provenance.json
