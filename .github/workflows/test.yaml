@@ -24,7 +24,7 @@ jobs:
 
   generate-example-provenance:
     needs: build
-    name: Generate build provenance
+    name: Generate build example provenance
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact
@@ -53,7 +53,7 @@ jobs:
       - name: Generate provenance
         uses: philips-labs/slsa-provenance-action@8f3f6a835ccfa2c0d5fb1d6dce15691a86575659
         with:
-          arguments: -d --artifact-path ${{ inputs.artifact-path }} --extra-materials material.json --output-path ${{ inputs.output }}
+          arguments: -d --artifact-path ${{ github.event.inputs.artifact-path }} --extra-materials material.json --output-path ${{ github.event.inputs.output }}
 
       - name: Upload provenance
         uses: actions/upload-artifact@v2
